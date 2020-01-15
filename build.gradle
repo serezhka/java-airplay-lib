@@ -1,0 +1,36 @@
+plugins {
+    id 'maven'
+    id 'java-library'
+}
+
+group 'com.github.serezhka.jap2lib'
+version '1.0.0'
+
+sourceCompatibility = 1.9
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jmdns:jmdns:3.5.5"
+    implementation "net.i2p.crypto:eddsa:0.3.0"
+    implementation "org.whispersystems:curve25519-java:0.5.0"
+    implementation "com.googlecode.plist:dd-plist:1.22"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.2"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task jarSources(type:Jar){
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jarSources
+}
