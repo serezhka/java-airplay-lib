@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-group 'com.github.serezhka.jap2lib'
+group 'com.github.serezhka'
 version '1.0.0'
 
 sourceCompatibility = 1.9
@@ -24,6 +24,12 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+task fatJar(type: Jar) {
+    archiveClassifier.set('all')
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
 
 task jarSources(type:Jar){
