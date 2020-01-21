@@ -75,7 +75,7 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
 
 [java-airplay-server](https://github.com/serezhka/java-airplay-server) with Netty
 
-Currently supports only mirroring with no sound. Saves mirror data stream to h264 file, playback in embedded vlc player or with js.
+Currently supports only mirroring with no sound.
 
 ## Links
 
