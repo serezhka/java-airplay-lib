@@ -77,6 +77,8 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
 
 Currently supports only mirroring with no sound.
 
+<img src="https://github.com/serezhka/java-airplay-server-examples/blob/media/gstreamer_playback.gif" width="600">
+
 ## Links
 
 [Analysis of AirPlay2 Technology](http://www.programmersought.com/article/2084789418/)
