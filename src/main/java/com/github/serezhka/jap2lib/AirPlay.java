@@ -67,10 +67,11 @@ public class AirPlay {
     /**
      * {@code RTSP SETUP}
      * <p>
-     * Writes RSTP SETUP response bytes to output stream
+     * Writes RSTP SETUP response bytes to output stream, returns stream data type: 110 - video, 96 - audio, 0 - no stream assigned
      */
-    public void rtspSetup(InputStream in, OutputStream out, int dataPort, int eventPort, int timingPort) throws Exception {
-        rtsp.rtspSetup(in, out, dataPort, eventPort, timingPort);
+    public void rtspSetup(InputStream in, OutputStream out,
+                          int videoDataPort, int videoEventPort, int videoTimingPort, int audioDataPort, int audioControlPort) throws Exception {
+        rtsp.rtspSetup(in, out, videoDataPort, videoEventPort, videoTimingPort, audioDataPort, audioControlPort);
     }
 
     public byte[] getFairPlayAesKey() {

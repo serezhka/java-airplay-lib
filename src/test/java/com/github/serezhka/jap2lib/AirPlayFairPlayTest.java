@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AirPlayFairPlayTest {
 
@@ -46,19 +45,20 @@ class AirPlayFairPlayTest {
         NSDictionary rtspSetup1Request = new NSDictionary();
         rtspSetup1Request.put("ekey", encryptedAesKey);
         byte[] rtspSetup1RequestBytes = BinaryPropertyListWriter.writeToArray(rtspSetup1Request);
-        airPlay.rtspSetup(new ByteArrayInputStream(rtspSetup1RequestBytes), null, 0, 0, 0);
+        airPlay.rtspSetup(new ByteArrayInputStream(rtspSetup1RequestBytes), null, 0, 0, 0, 0, 0);
 
         // RSTP SETUP 2 request
         long streamConnectionID = -3907568444900622110L;
         NSArray streams = new NSArray(1);
         NSDictionary dataStream = new NSDictionary();
+        dataStream.put("type", 110);
         dataStream.put("streamConnectionID", streamConnectionID);
         streams.setValue(0, dataStream);
         NSDictionary rtspSetup2Request = new NSDictionary();
         rtspSetup2Request.put("streams", streams);
         byte[] rtspSetup2RequestBytes = BinaryPropertyListWriter.writeToArray(rtspSetup2Request);
         ByteArrayOutputStream rtspSetup2Response = new ByteArrayOutputStream();
-        airPlay.rtspSetup(new ByteArrayInputStream(rtspSetup2RequestBytes), rtspSetup2Response, 7001, 7002, 7003);
+        airPlay.rtspSetup(new ByteArrayInputStream(rtspSetup2RequestBytes), rtspSetup2Response, 7001, 7002, 7003, 0, 0);
 
         NSDictionary rtsp2Response = (NSDictionary) BinaryPropertyListParser.parse(new ByteArrayInputStream(rtspSetup2Response.toByteArray()));
         HashMap stream = (HashMap) ((Object[]) rtsp2Response.get("streams").toJavaObject())[0];

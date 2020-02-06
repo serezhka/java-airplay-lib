@@ -1,10 +1,16 @@
 package com.github.serezhka.jap2lib;
 
+import net.i2p.crypto.eddsa.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 class FairPlay {
+
+    private static final Logger log = LoggerFactory.getLogger(FairPlay.class);
 
     private final OmgHax omgHax = new OmgHax();
 
@@ -13,7 +19,7 @@ class FairPlay {
     void fairPlaySetup(InputStream request, OutputStream response) throws IOException {
         byte[] data = request.readAllBytes();
         if (data[4] != 3) {
-            // fairplay version not supported
+            log.error("FairPlay version {} is not supported!", data[4]);
             return;
         }
         if (data.length == 16) {
@@ -38,6 +44,7 @@ class FairPlay {
     byte[] decryptAesKey(byte[] key) {
         byte[] aesKey = new byte[16];
         omgHax.decryptAesKeyJava(keyMsg, key, aesKey);
+        log.info("FairPlay AES key decrypted: " + Utils.bytesToHex(aesKey));
         return aesKey;
     }
 }

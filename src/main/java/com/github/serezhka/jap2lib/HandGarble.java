@@ -337,8 +337,6 @@ class HandGarble {
         buffer3[128] = (byte) (((F & K) | ((F | K) & 192)) ^ (D / 5));
 
         buffer2[25] ^= (((buffer0[(buffer3[120] & 0xff) % 20] & 0xff) << 1) * (buffer1[5] & 0xff)) - (weird_rol8((buffer3[76] & 0xff), ((buffer4[(buffer3[124] & 0xff) % 21] & 0xff) & 7)) & ((buffer3[20] & 0xff) + 110));
-
-        //exit(0);
     }
 
     private byte rol8(byte input, int count) {

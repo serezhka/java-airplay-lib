@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.github.serezhka'
-version '1.0.0'
+version '1.0.1'
 
 sourceCompatibility = 1.9
 
@@ -17,13 +17,20 @@ dependencies {
     implementation "net.i2p.crypto:eddsa:0.3.0"
     implementation "org.whispersystems:curve25519-java:0.5.0"
     implementation "com.googlecode.plist:dd-plist:1.22"
+    implementation "org.slf4j:slf4j-api:1.7.30"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.2"
+    testRuntimeOnly "org.slf4j:slf4j-simple:1.7.30"
 }
 
 test {
     useJUnitPlatform()
+}
+
+wrapper {
+    gradleVersion = '6.1'
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 task fatJar(type: Jar) {
@@ -32,7 +39,7 @@ task fatJar(type: Jar) {
     with jar
 }
 
-task jarSources(type:Jar){
+task jarSources(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
