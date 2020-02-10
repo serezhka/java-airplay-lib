@@ -39,16 +39,15 @@ class FairPlayDecryptor {
     }
 
     byte[] decrypt(byte[] input) throws Exception {
-        byte[] output = new byte[input.length];
         if (nextDecryptCount > 0) {
             for (int i = 0; i < nextDecryptCount; i++) {
-                output[i] = (byte) (input[i] ^ og[(16 - nextDecryptCount) + i]);
+                input[i] = (byte) (input[i] ^ og[(16 - nextDecryptCount) + i]);
             }
         }
 
         int encryptlen = ((input.length - nextDecryptCount) / 16) * 16;
         aesCtr128Decrypt.update(input, nextDecryptCount, encryptlen, input, nextDecryptCount);
-        System.arraycopy(input, nextDecryptCount, output, nextDecryptCount, encryptlen);
+        System.arraycopy(input, nextDecryptCount, input, nextDecryptCount, encryptlen);
 
         int restlen = (input.length - nextDecryptCount) % 16;
         int reststart = input.length - restlen;
@@ -57,10 +56,10 @@ class FairPlayDecryptor {
             Arrays.fill(og, (byte) 0);
             System.arraycopy(input, reststart, og, 0, restlen);
             aesCtr128Decrypt.update(og, 0, 16, og, 0);
-            System.arraycopy(og, 0, output, reststart, restlen);
+            System.arraycopy(og, 0, input, reststart, restlen);
             nextDecryptCount = 16 - restlen;
         }
 
-        return output;
+        return input;
     }
 }
