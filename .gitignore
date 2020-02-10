@@ -1,7 +1,8 @@
 .idea
 .gradle
-gradle
 gradlew
 gradlew.bat
+gradle/wrapper/*
+!gradle/wrapper/gradle-wrapper.properties
 build
 out
