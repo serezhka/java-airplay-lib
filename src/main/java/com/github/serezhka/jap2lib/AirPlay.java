@@ -85,13 +85,23 @@ public class AirPlay {
         return pairing.getSharedSecret() != null && rtsp.getStreamConnectionID() != null;
     }
 
-    public byte[] fairPlayDecrypt(byte[] input) throws Exception {
+    public void fairPlayDecryptVideoData(byte[] videoData) throws Exception {
+        checkFairPlayDecryptor();
+        fairPlayDecryptor.decryptVideoData(videoData);
+    }
+
+    public void fairPlayDecryptAudioData(byte[] audioData) throws Exception {
+        checkFairPlayDecryptor();
+        fairPlayDecryptor.decryptAudioData(audioData);
+    }
+
+    private void checkFairPlayDecryptor() throws Exception {
         if (fairPlayDecryptor == null) {
             if (!isFairPlayReady()) {
                 throw new IllegalStateException("FairPlay not ready!");
             }
-            fairPlayDecryptor = new FairPlayDecryptor(getFairPlayAesKey(), pairing.getSharedSecret(), rtsp.getStreamConnectionID());
+            fairPlayDecryptor = new FairPlayDecryptor(getFairPlayAesKey(), rtsp.getEiv(),
+                    pairing.getSharedSecret(), rtsp.getStreamConnectionID());
         }
-        return fairPlayDecryptor.decrypt(input);
     }
 }

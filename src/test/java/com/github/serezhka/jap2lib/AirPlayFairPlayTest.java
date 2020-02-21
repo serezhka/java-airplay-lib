@@ -69,14 +69,14 @@ class AirPlayFairPlayTest {
 
         // Decrypt payload
         byte[] sharedSecret = new byte[]{-5, -67, -104, 31, 49, 40, -76, 40, -116, 105, 45, -47, 125, -94, 117, -104, -54, -47, -50, 6, 122, 1, -38, -114, -88, -85, -128, 2, 116, -119, -90, 123};
-        FairPlayDecryptor fairPlayDecryptor = new FairPlayDecryptor(airPlay.getFairPlayAesKey(), sharedSecret, Long.toUnsignedString(streamConnectionID));
+        FairPlayDecryptor fairPlayDecryptor = new FairPlayDecryptor(airPlay.getFairPlayAesKey(), null, sharedSecret, Long.toUnsignedString(streamConnectionID));
 
         Path payloadFile = Paths.get(AirPlayFairPlayTest.class.getResource("/encrypted_payload").toURI());
         byte[] payload = Files.readAllBytes(payloadFile);
 
-        byte[] nalu = fairPlayDecryptor.decrypt(payload);
-        int nc_len = (nalu[3] & 0xFF) | ((nalu[2] & 0xFF) << 8) | ((nalu[1] & 0xFF) << 16) | ((nalu[0] & 0xFF) << 24);
+        fairPlayDecryptor.decryptVideoData(payload);
+        int nc_len = (payload[3] & 0xFF) | ((payload[2] & 0xFF) << 8) | ((payload[1] & 0xFF) << 16) | ((payload[0] & 0xFF) << 24);
 
-        assertEquals(nalu.length - 4, nc_len, "Decrypted payload is corrupted!");
+        assertEquals(payload.length - 4, nc_len, "Decrypted payload is corrupted!");
     }
 }

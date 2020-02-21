@@ -43,7 +43,7 @@ class FairPlay {
 
     byte[] decryptAesKey(byte[] key) {
         byte[] aesKey = new byte[16];
-        omgHax.decryptAesKeyJava(keyMsg, key, aesKey);
+        omgHax.decryptAesKey(keyMsg, key, aesKey);
         log.info("FairPlay AES key decrypted: " + Utils.bytesToHex(aesKey));
         return aesKey;
     }

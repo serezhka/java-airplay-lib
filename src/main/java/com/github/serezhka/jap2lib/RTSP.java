@@ -13,6 +13,7 @@ class RTSP {
 
     private String streamConnectionID;
     private byte[] encryptedAESKey;
+    private byte[] eiv;
 
     void rtspSetup(InputStream in, OutputStream out,
                    int videoDataPort, int videoEventPort, int videoTimingPort, int audioDataPort, int audioControlPort) throws Exception {
@@ -20,6 +21,10 @@ class RTSP {
 
         if (request.containsKey("ekey")) {
             encryptedAESKey = (byte[]) request.get("ekey").toJavaObject();
+        }
+
+        if (request.containsKey("eiv")) {
+            eiv = (byte[]) request.get("eiv").toJavaObject();
         }
 
         if (request.containsKey("streams")) {
@@ -72,5 +77,9 @@ class RTSP {
 
     byte[] getEncryptedAESKey() {
         return encryptedAESKey;
+    }
+
+    byte[] getEiv() {
+        return eiv;
     }
 }

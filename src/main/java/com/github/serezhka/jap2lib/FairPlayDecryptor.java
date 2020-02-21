@@ -9,11 +9,58 @@ import java.util.Arrays;
 
 class FairPlayDecryptor {
 
-    private Cipher aesCtr128Decrypt;
+    private final byte[] aesKey;
+    private final byte[] aesIV;
+    private final byte[] sharedSecret;
+    private final String streamConnectionID;
+
+    private Cipher aesCtrDecrypt;
+    private Cipher aesCbcDecrypt;
     private int nextDecryptCount;
     private byte[] og = new byte[16];
 
-    FairPlayDecryptor(byte[] aesKey, byte[] sharedSecret, String streamConnectionID) throws Exception {
+    FairPlayDecryptor(byte[] aesKey, byte[] aesIV, byte[] sharedSecret, String streamConnectionID) throws Exception {
+        this.aesKey = aesKey;
+        this.aesIV = aesIV;
+        this.sharedSecret = sharedSecret;
+        this.streamConnectionID = streamConnectionID;
+
+        aesCtrDecrypt = Cipher.getInstance("AES/CTR/NoPadding");
+        aesCbcDecrypt = Cipher.getInstance("AES/CBC/NoPadding");
+
+        initAesCtrCipher();
+    }
+
+    void decryptVideoData(byte[] videoData) throws Exception {
+        if (nextDecryptCount > 0) {
+            for (int i = 0; i < nextDecryptCount; i++) {
+                videoData[i] = (byte) (videoData[i] ^ og[(16 - nextDecryptCount) + i]);
+            }
+        }
+
+        int encryptlen = ((videoData.length - nextDecryptCount) / 16) * 16;
+        aesCtrDecrypt.update(videoData, nextDecryptCount, encryptlen, videoData, nextDecryptCount);
+        System.arraycopy(videoData, nextDecryptCount, videoData, nextDecryptCount, encryptlen);
+
+        int restlen = (videoData.length - nextDecryptCount) % 16;
+        int reststart = videoData.length - restlen;
+        nextDecryptCount = 0;
+        if (restlen > 0) {
+            Arrays.fill(og, (byte) 0);
+            System.arraycopy(videoData, reststart, og, 0, restlen);
+            aesCtrDecrypt.update(og, 0, 16, og, 0);
+            System.arraycopy(og, 0, videoData, reststart, restlen);
+            nextDecryptCount = 16 - restlen;
+        }
+    }
+
+    void decryptAudioData(byte[] audioData) throws Exception {
+        initAesCbcCipher();
+        int encryptedlen = audioData.length / 16 * 16;
+        aesCbcDecrypt.update(audioData, 0, encryptedlen, audioData, 0);
+    }
+
+    private void initAesCtrCipher() throws Exception {
         MessageDigest sha512Digest = MessageDigest.getInstance("SHA-512");
         sha512Digest.update(aesKey);
         sha512Digest.update(sharedSecret);
@@ -34,32 +81,15 @@ class FairPlayDecryptor {
         System.arraycopy(hash1, 0, decryptAesKey, 0, 16);
         System.arraycopy(hash2, 0, decryptAesIV, 0, 16);
 
-        aesCtr128Decrypt = Cipher.getInstance("AES/CTR/NoPadding");
-        aesCtr128Decrypt.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptAesKey, "AES"), new IvParameterSpec(decryptAesIV));
+        aesCtrDecrypt.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptAesKey, "AES"), new IvParameterSpec(decryptAesIV));
     }
 
-    byte[] decrypt(byte[] input) throws Exception {
-        if (nextDecryptCount > 0) {
-            for (int i = 0; i < nextDecryptCount; i++) {
-                input[i] = (byte) (input[i] ^ og[(16 - nextDecryptCount) + i]);
-            }
-        }
+    private void initAesCbcCipher() throws Exception {
+        MessageDigest sha512Digest = MessageDigest.getInstance("SHA-512");
+        sha512Digest.update(aesKey);
+        sha512Digest.update(sharedSecret);
+        byte[] eaesKey = Arrays.copyOfRange(sha512Digest.digest(), 0, 16);
 
-        int encryptlen = ((input.length - nextDecryptCount) / 16) * 16;
-        aesCtr128Decrypt.update(input, nextDecryptCount, encryptlen, input, nextDecryptCount);
-        System.arraycopy(input, nextDecryptCount, input, nextDecryptCount, encryptlen);
-
-        int restlen = (input.length - nextDecryptCount) % 16;
-        int reststart = input.length - restlen;
-        nextDecryptCount = 0;
-        if (restlen > 0) {
-            Arrays.fill(og, (byte) 0);
-            System.arraycopy(input, reststart, og, 0, restlen);
-            aesCtr128Decrypt.update(og, 0, 16, og, 0);
-            System.arraycopy(og, 0, input, reststart, restlen);
-            nextDecryptCount = 16 - restlen;
-        }
-
-        return input;
+        aesCbcDecrypt.init(Cipher.DECRYPT_MODE, new SecretKeySpec(eaesKey, "AES"), new IvParameterSpec(aesIV));
     }
 }

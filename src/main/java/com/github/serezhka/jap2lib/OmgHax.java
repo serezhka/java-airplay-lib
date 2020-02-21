@@ -11,7 +11,7 @@ class OmgHax {
     private final ModifiedMD5 modifiedMD5 = new ModifiedMD5();
     private final SapHash sapHash = new SapHash();
 
-    void decryptAesKeyJava(byte[] message3, byte[] cipherText, byte[] keyOut) {
+    void decryptAesKey(byte[] message3, byte[] cipherText, byte[] keyOut) {
         byte[] chunk1 = Arrays.copyOfRange(cipherText, 16, cipherText.length);
         byte[] chunk2 = Arrays.copyOfRange(cipherText, 56, cipherText.length);
         byte[] blockIn = new byte[16];
