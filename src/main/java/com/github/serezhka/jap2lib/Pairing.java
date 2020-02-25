@@ -45,6 +45,30 @@ class Pairing {
     }
 
     void info(OutputStream out) throws IOException {
+        NSArray audioFormats = new NSArray(2);
+        NSDictionary audioFormat1 = new NSDictionary();
+        audioFormat1.put("audioInputFormats", 67108860);
+        audioFormat1.put("audioOutputFormats", 67108860);
+        audioFormat1.put("type", 100);
+        audioFormats.setValue(0, audioFormat1);
+        NSDictionary audioFormat2 = new NSDictionary();
+        audioFormat2.put("audioInputFormats", 67108860);
+        audioFormat2.put("audioOutputFormats", 67108860);
+        audioFormat2.put("type", 101);
+        audioFormats.setValue(1, audioFormat2);
+
+        NSArray audioLatencies = new NSArray(2);
+        NSDictionary audioLatency1 = new NSDictionary();
+        audioLatency1.put("audioType", "default");
+        audioLatency1.put("inputLatencyMicros", false);
+        audioLatency1.put("type", 100);
+        audioLatencies.setValue(0, audioLatency1);
+        NSDictionary audioLatency2 = new NSDictionary();
+        audioLatency2.put("audioType", "default");
+        audioLatency2.put("inputLatencyMicros", false);
+        audioLatency2.put("type", 101);
+        audioLatencies.setValue(1, audioLatency2);
+
         NSArray displays = new NSArray(1);
         NSDictionary display = new NSDictionary();
         display.put("features", 14);
@@ -62,6 +86,8 @@ class Pairing {
         displays.setValue(0, display);
 
         NSDictionary serverInfo = new NSDictionary();
+        serverInfo.put("audioFormats", audioFormats);
+        serverInfo.put("audioLatencies", audioLatencies);
         serverInfo.put("displays", displays);
         serverInfo.put("features", 130367356919L);
         serverInfo.put("keepAliveSendStatsAsBody", 1);

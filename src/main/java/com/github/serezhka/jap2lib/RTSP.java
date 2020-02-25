@@ -4,12 +4,16 @@ import com.dd.plist.BinaryPropertyListParser;
 import com.dd.plist.BinaryPropertyListWriter;
 import com.dd.plist.NSArray;
 import com.dd.plist.NSDictionary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 
 class RTSP {
+
+    private static final Logger log = LoggerFactory.getLogger(RTSP.class);
 
     private String streamConnectionID;
     private byte[] encryptedAESKey;
@@ -18,6 +22,8 @@ class RTSP {
     void rtspSetup(InputStream in, OutputStream out,
                    int videoDataPort, int videoEventPort, int videoTimingPort, int audioDataPort, int audioControlPort) throws Exception {
         NSDictionary request = (NSDictionary) BinaryPropertyListParser.parse(in);
+
+        log.debug("Binary property list parsed:\n{}", request.toXMLPropertyList());
 
         if (request.containsKey("ekey")) {
             encryptedAESKey = (byte[]) request.get("ekey").toJavaObject();
@@ -66,7 +72,7 @@ class RTSP {
                 }
 
                 default:
-                    // todo unknown data type
+                    log.warn("Unknown stream type: {}", type);
             }
         }
     }
