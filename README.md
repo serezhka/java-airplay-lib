@@ -33,22 +33,22 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
   byte[] requestContent = ...
   switch (uri) {
     case "/info": {
-      airPlay.info(new ByteBufOutputStream(...));
-      // RTSP OK + response content
+      airPlay.info(.. byte output stream ..);
+      // RTSP OK + provided bytes 
     }
     case "/pair-setup": {
-      airPlay.pairSetup(new ByteBufOutputStream(...));
-      // RTSP OK + response content
+      airPlay.pairSetup(.. byte output stream ..);
+      // RTSP OK + provided bytes 
     }
     case "/pair-verify": {
-      airPlay.pairVerify(new ByteBufInputStream(requestContent),
-        new ByteBufOutputStream(...));
-      // RTSP OK + response content
+      airPlay.pairVerify(.. requestContent input stream ..,
+        .. byte output stream ..);
+      // RTSP OK + provided bytes 
     }
     case "/fp-setup": {
-      airPlay.fairPlaySetup(new ByteBufInputStream(requestContent),
-        new ByteBufOutputStream(...));
-      // RTSP OK + response content
+      airPlay.fairPlaySetup(.. requestContent input stream ..,
+        .. byte output stream ..);
+      // RTSP OK + provided bytes
     }
     case "/feedback": {
       // RTSP OK
@@ -57,9 +57,10 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
   
   RTSP SETUP
   
-    airPlay.rtspSetup(new ByteBufInputStream(requestContent),
-      new ByteBufOutputStream(...), airPlayPort, airTunesPort, timingPort); 
-    // RTSP OK + response content
+    airPlay.rtspSetup(.. requestContent input stream ..,
+      .. byte output stream .., int videoDataPort, int videoEventPort,
+      int videoTimingPort, int audioDataPort, int audioControlPort); 
+    // RTSP OK + provided bytes
       
     if (airPlay.isFairPlayReady()) {
       // start listening mirror data on airPlayPort 
@@ -68,6 +69,12 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
   RTSP GET_PARAMETER, RECORD, SET_PARAMETER, TEARDOWN
   
   ...
+  
+  DECRYPT MIRROR DATA
+    
+    airPlay.fairPlayDecryptVideoData(byte[] videoData);
+    
+    airPlay.fairPlayDecryptAudioData(byte[] audioData);
 ```
 <img src="https://github.com/serezhka/java-airplay-lib/blob/media/paired_1.jpg" width="256" height="256"><img src="https://github.com/serezhka/java-airplay-lib/blob/media/paired_2.jpg" height="256">
 
