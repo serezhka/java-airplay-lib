@@ -82,7 +82,7 @@ public class AirPlay {
      * @return {@code true} if we got shared secret during pairing & stream connection id during fair play setup
      */
     public boolean isFairPlayReady() {
-        return pairing.getSharedSecret() != null && rtsp.getStreamConnectionID() != null;
+        return pairing.getSharedSecret() != null && rtsp.getStreamConnectionID() != null && rtsp.getEiv() != null;
     }
 
     public void fairPlayDecryptVideoData(byte[] videoData) throws Exception {

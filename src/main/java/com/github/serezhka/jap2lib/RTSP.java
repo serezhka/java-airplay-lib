@@ -39,6 +39,8 @@ class RTSP {
             int type = (int) stream.get("type");
 
             switch (type) {
+
+                // mirror
                 case 110: {
                     streamConnectionID = Long.toUnsignedString((long) stream.get("streamConnectionID"));
 
@@ -56,7 +58,10 @@ class RTSP {
                     break;
                 }
 
+                // audio
                 case 96: {
+
+                    log.debug("Audio format: {}", getAudioFormatDescription((int) stream.get("audioFormat")));
 
                     NSArray streams = new NSArray(1);
                     NSDictionary dataStream = new NSDictionary();
@@ -87,5 +92,23 @@ class RTSP {
 
     byte[] getEiv() {
         return eiv;
+    }
+
+    private String getAudioFormatDescription(int format) {
+        String formatDescription;
+        switch (format) {
+            case 0x40000:
+                formatDescription = "96 AppleLossless, 96 352 0 16 40 10 14 2 255 0 0 44100";
+                break;
+            case 0x400000:
+                formatDescription = "96 mpeg4-generic/44100/2, 96 mode=AAC-main; constantDuration=1024";
+                break;
+            case 0x1000000:
+                formatDescription = "96 mpeg4-generic/44100/2, 96 mode=AAC-eld; constantDuration=480";
+                break;
+            default:
+                formatDescription = "Unknown: " + format;
+        }
+        return formatDescription;
     }
 }
