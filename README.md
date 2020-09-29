@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/serezhka/java-airplay-lib.svg?branch=master)](https://travis-ci.com/serezhka/java-airplay-lib) [![Release](https://jitpack.io/v/serezhka/java-airplay-lib.svg)](https://jitpack.io/#serezhka/java-airplay-lib) [![HitCount](http://hits.dwyl.io/serezhka/java-airplay-lib.svg)](http://hits.dwyl.io/serezhka/java-airplay-lib)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
-This library is intended to easily create AirPlay2 servers acting like Apple TV. Tested with iPhone X (iOS 13.3)
+This library is intended to easily create AirPlay2 servers acting like Apple TV. Tested with iPhone X (iOS 14.0.1)
 
 ## How to use?
 
@@ -62,8 +62,12 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
       int videoTimingPort, int audioDataPort, int audioControlPort); 
     // RTSP OK + provided bytes
       
-    if (airPlay.isFairPlayReady()) {
-      // start listening mirror data on airPlayPort 
+    if (airPlay.isFairPlayVideoDecryptorReady()) {
+      // start listening video data on videoDataPort 
+    }
+    
+    if (airPlay.isFairPlayAudioDecryptorReady()) {
+      // start listening audio data on audioDataPort 
     }
   
   RTSP GET_PARAMETER, RECORD, SET_PARAMETER, TEARDOWN
@@ -72,17 +76,15 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
   
   DECRYPT MIRROR DATA
     
-    airPlay.fairPlayDecryptVideoData(byte[] videoData);
+    airPlay.decryptVideo(byte[] video);
     
-    airPlay.fairPlayDecryptAudioData(byte[] audioData);
+    airPlay.decryptAudio(byte[] audio, int audioLength);
 ```
 <img src="https://github.com/serezhka/java-airplay-lib/blob/media/paired_1.jpg" width="256" height="256"><img src="https://github.com/serezhka/java-airplay-lib/blob/media/paired_2.jpg" height="256">
 
 ## Example server
 
 [java-airplay-server](https://github.com/serezhka/java-airplay-server) with Netty
-
-Currently supports only mirroring with no sound.
 
 <img src="https://github.com/serezhka/java-airplay-server-examples/blob/media/gstreamer_playback.gif" width="600">
 
