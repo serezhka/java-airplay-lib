@@ -14,7 +14,7 @@ class FairPlay {
 
     private final OmgHax omgHax = new OmgHax();
 
-    private byte[] keyMsg = new byte[164];
+    private final byte[] keyMsg = new byte[164];
 
     void fairPlaySetup(InputStream request, OutputStream response) throws IOException {
         byte[] data = request.readAllBytes();

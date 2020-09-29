@@ -12,7 +12,8 @@ public class AirPlay {
     private final FairPlay fairplay;
     private final RTSP rtsp;
 
-    private FairPlayDecryptor fairPlayDecryptor;
+    private FairPlayVideoDecryptor fairPlayVideoDecryptor;
+    private FairPlayAudioDecryptor fairPlayAudioDecryptor;
 
     public AirPlay() {
         pairing = new Pairing();
@@ -79,29 +80,36 @@ public class AirPlay {
     }
 
     /**
-     * @return {@code true} if we got shared secret during pairing & stream connection id during fair play setup
+     * @return {@code true} if we got shared secret during pairing, ekey & stream connection id during RTSP SETUP
      */
-    public boolean isFairPlayReady() {
-        return pairing.getSharedSecret() != null && rtsp.getStreamConnectionID() != null && rtsp.getEiv() != null;
+    public boolean isFairPlayVideoDecryptorReady() {
+        return pairing.getSharedSecret() != null && rtsp.getEncryptedAESKey() != null && rtsp.getStreamConnectionID() != null;
     }
 
-    public void fairPlayDecryptVideoData(byte[] videoData) throws Exception {
-        checkFairPlayDecryptor();
-        fairPlayDecryptor.decryptVideoData(videoData);
+    /**
+     * @return {@code true} if we got shared secret during pairing, ekey & eiv during RTSP SETUP
+     */
+    public boolean isFairPlayAudioDecryptorReady() {
+        return pairing.getSharedSecret() != null && rtsp.getEncryptedAESKey() != null && rtsp.getEiv() != null;
     }
 
-    public void fairPlayDecryptAudioData(byte[] audioData) throws Exception {
-        checkFairPlayDecryptor();
-        fairPlayDecryptor.decryptAudioData(audioData);
-    }
-
-    private void checkFairPlayDecryptor() throws Exception {
-        if (fairPlayDecryptor == null) {
-            if (!isFairPlayReady()) {
-                throw new IllegalStateException("FairPlay not ready!");
+    public void decryptVideo(byte[] video) throws Exception {
+        if (fairPlayVideoDecryptor == null) {
+            if (!isFairPlayVideoDecryptorReady()) {
+                throw new IllegalStateException("FairPlayVideoDecryptor not ready!");
             }
-            fairPlayDecryptor = new FairPlayDecryptor(getFairPlayAesKey(), rtsp.getEiv(),
-                    pairing.getSharedSecret(), rtsp.getStreamConnectionID());
+            fairPlayVideoDecryptor = new FairPlayVideoDecryptor(getFairPlayAesKey(), pairing.getSharedSecret(), rtsp.getStreamConnectionID());
         }
+        fairPlayVideoDecryptor.decrypt(video);
+    }
+
+    public void decryptAudio(byte[] audio, int audioLength) throws Exception {
+        if (fairPlayAudioDecryptor == null) {
+            if (!isFairPlayAudioDecryptorReady()) {
+                throw new IllegalStateException("FairPlayAudioDecryptor not ready!");
+            }
+            fairPlayAudioDecryptor = new FairPlayAudioDecryptor(getFairPlayAesKey(), rtsp.getEiv(), pairing.getSharedSecret());
+        }
+        fairPlayAudioDecryptor.decrypt(audio, audioLength);
     }
 }
