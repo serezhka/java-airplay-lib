@@ -247,7 +247,7 @@ class OmgHax {
         }
     }
 
-    void cycle(byte[] block, int key_schedule[][]) {
+    void cycle(byte[] block, int[][] key_schedule) {
         int ptr1, ptr2, ptr3, ptr4, ab;
 
         ByteBuffer bWords = ByteBuffer.wrap(block);

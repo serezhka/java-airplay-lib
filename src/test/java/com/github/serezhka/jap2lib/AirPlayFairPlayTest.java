@@ -4,6 +4,7 @@ import com.dd.plist.BinaryPropertyListParser;
 import com.dd.plist.BinaryPropertyListWriter;
 import com.dd.plist.NSArray;
 import com.dd.plist.NSDictionary;
+import com.github.serezhka.jap2lib.rtsp.MediaStreamInfo;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +47,7 @@ class AirPlayFairPlayTest {
         NSDictionary rtspSetup1Request = new NSDictionary();
         rtspSetup1Request.put("ekey", encryptedAesKey);
         byte[] rtspSetup1RequestBytes = BinaryPropertyListWriter.writeToArray(rtspSetup1Request);
-        airPlay.rtspSetup(new ByteArrayInputStream(rtspSetup1RequestBytes), null, 0, 0, 0, 0, 0);
+        airPlay.rtspSetupEncryption(new ByteArrayInputStream(rtspSetup1RequestBytes));
 
         // RSTP SETUP 2 request
         long streamConnectionID = -3907568444900622110L;
@@ -58,7 +60,8 @@ class AirPlayFairPlayTest {
         rtspSetup2Request.put("streams", streams);
         byte[] rtspSetup2RequestBytes = BinaryPropertyListWriter.writeToArray(rtspSetup2Request);
         ByteArrayOutputStream rtspSetup2Response = new ByteArrayOutputStream();
-        airPlay.rtspSetup(new ByteArrayInputStream(rtspSetup2RequestBytes), rtspSetup2Response, 7001, 7002, 7003, 0, 0);
+        airPlay.rtspGetMediaStreamInfo(new ByteArrayInputStream(rtspSetup2RequestBytes));
+        airPlay.rtspSetupVideo(rtspSetup2Response, 7001, 7002, 7003);
 
         NSDictionary rtsp2Response = (NSDictionary) BinaryPropertyListParser.parse(new ByteArrayInputStream(rtspSetup2Response.toByteArray()));
         HashMap stream = (HashMap) ((Object[]) rtsp2Response.get("streams").toJavaObject())[0];

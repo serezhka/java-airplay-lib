@@ -1,8 +1,8 @@
 package com.github.serezhka.jap2lib;
 
 import com.dd.plist.BinaryPropertyListWriter;
-import com.dd.plist.NSArray;
-import com.dd.plist.NSDictionary;
+import com.dd.plist.NSObject;
+import com.dd.plist.PropertyListParser;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPublicKey;
 import net.i2p.crypto.eddsa.KeyPairGenerator;
@@ -23,6 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Arrays;
@@ -44,59 +45,9 @@ class Pairing {
         this.keyPair = new KeyPairGenerator().generateKeyPair();
     }
 
-    void info(OutputStream out) throws IOException {
-        NSArray audioFormats = new NSArray(2);
-        NSDictionary audioFormat1 = new NSDictionary();
-        audioFormat1.put("audioInputFormats", 67108860);
-        audioFormat1.put("audioOutputFormats", 67108860);
-        audioFormat1.put("type", 100);
-        audioFormats.setValue(0, audioFormat1);
-        NSDictionary audioFormat2 = new NSDictionary();
-        audioFormat2.put("audioInputFormats", 67108860);
-        audioFormat2.put("audioOutputFormats", 67108860);
-        audioFormat2.put("type", 101);
-        audioFormats.setValue(1, audioFormat2);
-
-        NSArray audioLatencies = new NSArray(2);
-        NSDictionary audioLatency1 = new NSDictionary();
-        audioLatency1.put("audioType", "default");
-        audioLatency1.put("inputLatencyMicros", false);
-        audioLatency1.put("type", 100);
-        audioLatencies.setValue(0, audioLatency1);
-        NSDictionary audioLatency2 = new NSDictionary();
-        audioLatency2.put("audioType", "default");
-        audioLatency2.put("inputLatencyMicros", false);
-        audioLatency2.put("type", 101);
-        audioLatencies.setValue(1, audioLatency2);
-
-        NSArray displays = new NSArray(1);
-        NSDictionary display = new NSDictionary();
-        display.put("features", 14);
-        display.put("height", 1080);
-        display.put("heightPhysical", false);
-        display.put("heightPixels", 1080);
-        display.put("maxFPS", 30);
-        display.put("overscanned", false);
-        display.put("refreshRate", 60);
-        display.put("rotation", false);
-        display.put("uuid", "e5f7a68d-7b0f-4305-984b-974f677a150b");
-        display.put("width", 1920);
-        display.put("widthPhysical", false);
-        display.put("widthPixels", 1920);
-        displays.setValue(0, display);
-
-        NSDictionary serverInfo = new NSDictionary();
-        serverInfo.put("audioFormats", audioFormats);
-        serverInfo.put("audioLatencies", audioLatencies);
-        serverInfo.put("displays", displays);
-        serverInfo.put("features", 130367356919L);
-        serverInfo.put("keepAliveSendStatsAsBody", 1);
-        serverInfo.put("model", "AppleTV2,1");
-        serverInfo.put("name", "Apple TV");
-        serverInfo.put("pi", "b08f5a79-db29-4384-b456-a4784d9e6055");
-        serverInfo.put("sourceVersion", "220.68");
-        serverInfo.put("statusFlags", 68);
-        serverInfo.put("vv", 2);
+    void info(OutputStream out) throws Exception {
+        URL response = Pairing.class.getResource("/info-response.xml");
+        NSObject serverInfo = PropertyListParser.parse(response.openStream());
         BinaryPropertyListWriter.write(out, serverInfo);
     }
 
@@ -107,8 +58,8 @@ class Pairing {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     void pairVerify(InputStream request, OutputStream response) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, SignatureException, BadPaddingException, IllegalBlockSizeException, IOException {
         int flag = request.read();
+        request.skip(3);
         if (flag > 0) {
-            request.skip(3);
             request.read(ecdhTheirs = new byte[32]);
             request.read(edTheirs = new byte[32]);
 
@@ -137,7 +88,6 @@ class Pairing {
 
             response.write(responseContent);
         } else {
-            request.skip(3);
             byte[] signature = new byte[64];
             request.read(signature);
 

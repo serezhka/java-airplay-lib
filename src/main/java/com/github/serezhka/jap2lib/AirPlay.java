@@ -1,5 +1,7 @@
 package com.github.serezhka.jap2lib;
 
+import com.github.serezhka.jap2lib.rtsp.MediaStreamInfo;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -66,13 +68,39 @@ public class AirPlay {
     }
 
     /**
-     * {@code RTSP SETUP}
-     * <p>
-     * Writes RSTP SETUP response bytes to output stream, returns stream data type: 110 - video, 96 - audio, 0 - no stream assigned
+     * Retrieves information about media stream from RTSP SETUP request
+     *
+     * @return null if there's no stream info
      */
-    public void rtspSetup(InputStream in, OutputStream out,
-                          int videoDataPort, int videoEventPort, int videoTimingPort, int audioDataPort, int audioControlPort) throws Exception {
-        rtsp.rtspSetup(in, out, videoDataPort, videoEventPort, videoTimingPort, audioDataPort, audioControlPort);
+    public MediaStreamInfo rtspGetMediaStreamInfo(InputStream in) throws Exception {
+        return rtsp.getMediaStreamInfo(in);
+    }
+
+    /**
+     * {@code RTSP SETUP ENCRYPTION}
+     * <p>
+     * Retrieves encrypted EAS key and IV
+     */
+    public void rtspSetupEncryption(InputStream in) throws Exception {
+        rtsp.setup(in);
+    }
+
+    /**
+     * {@code RTSP SETUP VIDEO}
+     * <p>
+     * Writes video event, data and timing ports info to output stream
+     */
+    public void rtspSetupVideo(OutputStream out, int videoDataPort, int videoEventPort, int videoTimingPort) throws Exception {
+        rtsp.setupVideo(out, videoDataPort, videoEventPort, videoTimingPort);
+    }
+
+    /**
+     * {@code RTSP SETUP AUDIO}
+     * <p>
+     * Writes audio control and data ports info to output stream
+     */
+    public void rtspSetupAudio(OutputStream out, int audioDataPort, int audioControlPort) throws Exception {
+        rtsp.setupAudio(out, audioDataPort, audioControlPort);
     }
 
     public byte[] getFairPlayAesKey() {

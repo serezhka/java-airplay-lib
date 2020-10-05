@@ -4,9 +4,9 @@ plugins {
 }
 
 group 'com.github.serezhka'
-version '1.0.3'
+version '1.0.4'
 
-sourceCompatibility = 1.9
+sourceCompatibility = JavaVersion.VERSION_1_9
 
 repositories {
     mavenCentral()
