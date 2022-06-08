@@ -1,8 +1,0 @@
-language: java
-
-before_install:
-  - wget https://services.gradle.org/distributions/gradle-7.4-bin.zip
-  - unzip -qq gradle-7.4-bin.zip
-  - export GRADLE_HOME=$PWD/gradle-7.4
-  - export PATH=$GRADLE_HOME/bin:$PATH
-  - gradle -v
