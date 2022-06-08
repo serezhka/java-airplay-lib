@@ -2,7 +2,6 @@
 .gradle
 gradlew
 gradlew.bat
-gradle/wrapper/*
-!gradle/wrapper/gradle-wrapper.properties
+gradle
 build
 out

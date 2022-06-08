@@ -2,14 +2,14 @@ package com.github.serezhka.jap2lib.rtsp;
 
 public class AudioStreamInfo implements MediaStreamInfo {
 
+    private final CompressionType compressionType;
     private final AudioFormat audioFormat;
+    private final int samplesPerFrame;
 
-    public AudioStreamInfo() {
-        audioFormat = null;
-    }
-
-    public AudioStreamInfo(long audioFormatCode) {
-        this.audioFormat = AudioFormat.fromCode(audioFormatCode);
+    private AudioStreamInfo(CompressionType compressionType, AudioFormat audioFormat, int samplesPerFrame) {
+        this.compressionType = compressionType;
+        this.audioFormat = audioFormat;
+        this.samplesPerFrame = samplesPerFrame;
     }
 
     @Override
@@ -17,8 +17,39 @@ public class AudioStreamInfo implements MediaStreamInfo {
         return StreamType.AUDIO;
     }
 
+    public CompressionType getCompressionType() {
+        return compressionType;
+    }
+
     public AudioFormat getAudioFormat() {
         return audioFormat;
+    }
+
+    public int getSamplesPerFrame() {
+        return samplesPerFrame;
+    }
+
+    public enum CompressionType {
+        LPCM(1),
+        ALAC(2),
+        AAC(4),
+        AAC_ELD(8),
+        OPUS(32);
+
+        private final int code;
+
+        CompressionType(int code) {
+            this.code = code;
+        }
+
+        public static CompressionType fromCode(long code) {
+            for (CompressionType type : CompressionType.values()) {
+                if (type.code == code) {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException("Unknown compression type with code: " + code);
+        }
     }
 
     public enum AudioFormat {
@@ -67,6 +98,31 @@ public class AudioStreamInfo implements MediaStreamInfo {
                 }
             }
             throw new IllegalArgumentException("Unknown audio format with code: " + code);
+        }
+    }
+
+    public static final class AudioStreamInfoBuilder {
+        private AudioFormat audioFormat;
+        private CompressionType compressionType;
+        private int samplesPerFrame;
+
+        public AudioStreamInfoBuilder audioFormat(AudioFormat audioFormat) {
+            this.audioFormat = audioFormat;
+            return this;
+        }
+
+        public AudioStreamInfoBuilder compressionType(CompressionType compressionType) {
+            this.compressionType = compressionType;
+            return this;
+        }
+
+        public AudioStreamInfoBuilder samplesPerFrame(int samplesPerFrame) {
+            this.samplesPerFrame = samplesPerFrame;
+            return this;
+        }
+
+        public AudioStreamInfo build() {
+            return new AudioStreamInfo(compressionType, audioFormat, samplesPerFrame);
         }
     }
 }

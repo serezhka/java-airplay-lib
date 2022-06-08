@@ -44,14 +44,23 @@ class RTSP {
 
                 // audio
                 case 96:
+                    AudioStreamInfo.AudioStreamInfoBuilder builder = new AudioStreamInfo.AudioStreamInfoBuilder();
+                    if (stream.containsKey("ct")) {
+                        int compressionType = (int) stream.get("ct");
+                        builder.compressionType(AudioStreamInfo.CompressionType.fromCode(compressionType));
+                    }
                     if (stream.containsKey("audioFormat")) {
                         long audioFormatCode = (int) stream.get("audioFormat"); // FIXME int or long ?!
-                        return new AudioStreamInfo(audioFormatCode);
+                        builder.audioFormat(AudioStreamInfo.AudioFormat.fromCode(audioFormatCode));
                     }
-                    return new AudioStreamInfo();
+                    if (stream.containsKey("spf")) {
+                        int samplesPerFrame = (int) stream.get("spf");
+                        builder.samplesPerFrame(samplesPerFrame);
+                    }
+                    return builder.build();
 
                 default:
-                    log.warn("Unknown stream type: {}", type);
+                    log.error("Unknown stream type: {}", type);
             }
         }
         return null;

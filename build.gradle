@@ -1,27 +1,28 @@
 plugins {
-    id 'maven'
     id 'java-library'
 }
 
 group 'com.github.serezhka'
-version '1.0.4'
-
-sourceCompatibility = JavaVersion.VERSION_1_9
+version '1.0.5'
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation "org.jmdns:jmdns:3.5.5"
-    implementation "net.i2p.crypto:eddsa:0.3.0"
-    implementation "org.whispersystems:curve25519-java:0.5.0"
-    implementation "com.googlecode.plist:dd-plist:1.22"
-    implementation "org.slf4j:slf4j-api:1.7.30"
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_9
+}
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.4.2"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.4.2"
-    testRuntimeOnly "org.slf4j:slf4j-simple:1.7.30"
+dependencies {
+    implementation 'org.jmdns:jmdns:3.5.7'
+    implementation 'net.i2p.crypto:eddsa:0.3.0'
+    implementation 'org.whispersystems:curve25519-java:0.5.0'
+    implementation 'com.googlecode.plist:dd-plist:1.23'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly 'org.slf4j:slf4j-simple:1.7.36'
 }
 
 test {
@@ -29,18 +30,18 @@ test {
 }
 
 wrapper {
-    gradleVersion = '6.1.1'
+    gradleVersion = '7.4'
     distributionType = Wrapper.DistributionType.ALL
 }
 
 task fatJar(type: Jar) {
-    classifier = 'all'
+    archiveClassifier.set('all')
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
 
 task jarSources(type: Jar) {
-    classifier = 'sources'
+    archiveClassifier.set('sources')
     from sourceSets.main.allSource
 }
 
