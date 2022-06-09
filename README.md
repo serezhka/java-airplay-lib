@@ -2,6 +2,7 @@
 
 [![build](https://github.com/serezhka/java-airplay-lib/actions/workflows/build.yaml/badge.svg)](https://github.com/serezhka/java-airplay-lib/actions/workflows/build.yaml)
 [![Release](https://jitpack.io/v/serezhka/java-airplay-lib.svg)](https://jitpack.io/#serezhka/java-airplay-lib)
+![ViewCount](https://views.whatilearened.today/views/github/serezhka/java-airplay-lib.svg)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
 This library is intended to easily create AirPlay2 servers acting like Apple TV. Tested with iPhone X (iOS 14.0.1)
