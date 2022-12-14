@@ -5,6 +5,10 @@
 ![ViewCount](https://views.whatilearened.today/views/github/serezhka/java-airplay-lib.svg)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
+#### <br><br><br> 14.12.2022: Check out new java-airplay project: https://github.com/serezhka/java-airplay <br><br><br>
+
+
+
 This library is intended to easily create AirPlay2 servers acting like Apple TV. Tested with iPhone X (iOS 14.0.1)
 
 ## How to use?
@@ -97,9 +101,3 @@ This library is intended to easily create AirPlay2 servers acting like Apple TV.
 ## Info
 
 Inspired by many other open source projects analyzing AirPlay2 protocol. Special thanks to OmgHax.c's author 🤯
-
-It took me several months of sleepless nights with debugger and wireshark to make this work.
-
-If you appreciate my work, consider buying me a cup of coffee to keep me recharged
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/paypalme2/srzhka) [![Donate](https://github.com/serezhka/java-airplay-lib/blob/media/yandex_money.svg)](https://money.yandex.ru/to/4100111540466689)
